@@ -1,0 +1,10 @@
+target/
+data/
+.env
+.env.*
+!.env.example
+.mvn/wrapper/maven-wrapper.jar
+.idea/
+*.iml
+*.log
+.DS_Store

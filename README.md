@@ -1,10 +1,23 @@
-# Spring Boot backend
+# UFO Backend Core
 
-Java 21 / Spring Boot 3.5.16 / Spring Security / MySQL. Implements application authentication, user management, Omada access, and the hardware-monitoring requirements in `docs/additional`.
+Java 21 / Spring Boot 3.5.16 / Spring Security / MySQL. Implements application authentication, user management, Omada access, and the hardware-monitoring requirements in the [portal requirements](https://github.com/haroldhanzi/ufo-portal/tree/main/docs/additional).
+
+## Repository layout
+
+Clone this repository beside the frontend when using the combined Docker stack:
+
+```sh
+git clone https://github.com/haroldhanzi/ufo-portal.git
+git clone https://github.com/haroldhanzi/ufo-backend-core.git
+```
+
+The portal Compose build defaults to `../ufo-backend-core`. The backend also builds independently with `sh mvnw verify` or `docker build -t ufo-backend-core .`. Configuration is provided at runtime through environment variables.
 
 ## Start
 
-Create a MySQL database named `ufo_portal`, grant a dedicated user access, and set the variables in `.env.example`. From `backend`:
+Install JDK 21 and ensure `JAVA_HOME` points to it; check `sh mvnw -v` (or `mvnw.cmd -v`) before building.
+
+Create a MySQL database named `ufo_portal`, grant a dedicated user access, and set the variables in `.env.example`. From the `ufo-backend-core` repository root:
 
 ```powershell
 $env:DATABASE_USERNAME = 'ufo'
@@ -19,9 +32,9 @@ $env:OMADA_CLIENT_SECRET = 'your-client-secret'
 .\mvnw.cmd spring-boot:run
 ```
 
-The default URL is `jdbc:mysql://localhost:3306/ufo_portal?connectionTimeZone=UTC`; override `DATABASE_URL` if needed. Flyway migrates the schema and Hibernate validates it. Maven does not automatically load `.env`. Alternatively use the root Compose stack described in [DEPLOYMENT.md](../DEPLOYMENT.md). It provisions the React frontend, Spring Boot, and MySQL 8.4 with a local bind mount. The initial administrator is created only when no users exist. No default password is provided.
+The default URL is `jdbc:mysql://localhost:3306/ufo_portal?connectionTimeZone=UTC`; override `DATABASE_URL` if needed. Flyway migrates the schema and Hibernate validates it. Maven does not automatically load `.env`. Alternatively use the companion portal Compose stack described in [DEPLOYMENT.md](https://github.com/haroldhanzi/ufo-portal/blob/main/DEPLOYMENT.md). It provisions the React frontend, Spring Boot, and MySQL 8.4 with a local bind mount. The initial administrator is created only when no users exist. No default password is provided.
 
-Health: `GET /actuator/health`. Validate/package: `.\mvnw.cmd verify`. Run packaged app: `java -jar target/hardware-monitoring-1.0.0.jar`. Linux/macOS: use `sh mvnw`. H2 is a test-only dependency; it is not a runtime database option.
+Health: `GET /actuator/health`. Validate/package: `.\mvnw.cmd verify`. Run packaged app: `java -jar target/ufo-backend-core-1.0.0.jar`. Linux/macOS: use `sh mvnw`. H2 is a test-only dependency; it is not a runtime database option.
 
 ## Bearer authentication and Omada sessions
 
